@@ -39,6 +39,8 @@ class FA_RevealMenuController: UIViewController {
     
     let expandViewSizePercentage: CGFloat = 0.8
     
+    var maxExpandSize: CGFloat? = nil
+    
     let panGestureXLocationStart: CGFloat = 70.0
     
     var currentState: SlideOutState = .Collapsed {
@@ -53,6 +55,7 @@ class FA_RevealMenuController: UIViewController {
         
         self.performSegueWithIdentifier(FASegueFrontIdentifier, sender: nil)
         self.performSegueWithIdentifier(FASegueLeftIdentifier, sender: nil)
+        
         
         // wrap the centerViewController in a navigation controller, so we can push views to it
         // and display bar button items in the navigation bar
@@ -95,7 +98,8 @@ extension FA_RevealMenuController {
             
             var viewSize = self.view.frame.size
             var smallestSize = min(viewSize.height, viewSize.width)
-            animateCenterPanelXPosition(targetPosition: (smallestSize * self.expandViewSizePercentage))
+            let targetSize = maxExpandSize != nil ? maxExpandSize! : (smallestSize * self.expandViewSizePercentage)
+            animateCenterPanelXPosition(targetPosition: targetSize)
         } else {
             animateCenterPanelXPosition(targetPosition: 0) { finished in
                 self.currentState = .Collapsed
