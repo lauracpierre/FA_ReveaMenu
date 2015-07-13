@@ -28,10 +28,15 @@ class FrontViewController: UIViewController {
         self.presentViewController(controller, animated: true, completion: nil)
     }
     
+    override func prefersStatusBarHidden() -> Bool {
+        return true
+    }
+    
 }
 
 extension FrontViewController: FA_FrontViewMinimalImplementation {
     func selectionChangedInMenu(object: AnyObject?) {
         self.showModal("Apparenlty something changed in menu")
+
     }
 }

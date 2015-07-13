@@ -15,6 +15,7 @@
 		8F15D32D1AFECDBE004E456C /* FA_RevealMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F15D32C1AFECDBE004E456C /* FA_RevealMenuController.swift */; };
 		8F15D32F1AFED961004E456C /* LeftMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F15D32E1AFED961004E456C /* LeftMenuController.swift */; };
 		8F15D3311AFEDE52004E456C /* FrontViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F15D3301AFEDE52004E456C /* FrontViewController.swift */; };
+		8F3AFD021B53AD8F0001B619 /* SecondaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3AFD011B53AD8F0001B619 /* SecondaryViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +41,7 @@
 		8F15D32C1AFECDBE004E456C /* FA_RevealMenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FA_RevealMenuController.swift; sourceTree = "<group>"; };
 		8F15D32E1AFED961004E456C /* LeftMenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeftMenuController.swift; sourceTree = "<group>"; };
 		8F15D3301AFEDE52004E456C /* FrontViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrontViewController.swift; sourceTree = "<group>"; };
+		8F3AFD011B53AD8F0001B619 /* SecondaryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecondaryViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +91,7 @@
 				8F15D3131AFECDA4004E456C /* Images.xcassets */,
 				8F15D3151AFECDA4004E456C /* LaunchScreen.xib */,
 				8F15D30A1AFECDA4004E456C /* Supporting Files */,
+				8F3AFD011B53AD8F0001B619 /* SecondaryViewController.swift */,
 			);
 			path = FA_RevealMenu;
 			sourceTree = "<group>";
@@ -222,6 +225,7 @@
 				8F15D3311AFEDE52004E456C /* FrontViewController.swift in Sources */,
 				8F15D30D1AFECDA4004E456C /* AppDelegate.swift in Sources */,
 				8F15D32F1AFED961004E456C /* LeftMenuController.swift in Sources */,
+				8F3AFD021B53AD8F0001B619 /* SecondaryViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -419,6 +423,7 @@
 				8F15D3281AFECDA4004E456C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		8F15D3291AFECDA4004E456C /* Build configuration list for PBXNativeTarget "FA_RevealMenuTests" */ = {
 			isa = XCConfigurationList;
@@ -427,6 +432,7 @@
 				8F15D32B1AFECDA4004E456C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

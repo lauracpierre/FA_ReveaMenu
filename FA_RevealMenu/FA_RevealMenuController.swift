@@ -15,12 +15,10 @@ enum SlideOutState {
 
 // MARK: - Back menu delegate protocol
 protocol FA_MenuSelectionProtocol {
-    func selectionWasMade(sender: UIViewController, object: AnyObject?)
-}
-
-// MARK: - Minimum implementation for back menu
-protocol FA_MenuMinimalImplementation {
-    var delegate: FA_MenuSelectionProtocol? {get set}
+    
+    func shouldReplaceWithNewViewController() -> Bool
+    
+    func selectionWasMade() -> AnyObject
 }
 
 // MARK: - Minimum implementation for front menu
@@ -43,6 +41,8 @@ class FA_RevealMenuController: UIViewController {
     
     let panGestureXLocationStart: CGFloat = 70.0
     
+    var leftDelegate: FA_MenuSelectionProtocol?
+    
     var currentState: SlideOutState = .Collapsed {
         didSet {
             let shouldShowShadow = currentState != .Collapsed
@@ -56,17 +56,8 @@ class FA_RevealMenuController: UIViewController {
         self.performSegueWithIdentifier(FASegueFrontIdentifier, sender: nil)
         self.performSegueWithIdentifier(FASegueLeftIdentifier, sender: nil)
         
-        
-        // wrap the centerViewController in a navigation controller, so we can push views to it
-        // and display bar button items in the navigation bar
-        //centerNavigationController = UINavigationController(rootViewController: centerViewController)
-        
-        addChildViewController(centerViewController)
-        view.addSubview(centerViewController.view)
-        addChildSidePanelController(leftViewController!)
-        
-        if var left = leftViewController as? FA_MenuMinimalImplementation {
-            left.delegate = self
+        if var left = leftViewController as? FA_MenuSelectionProtocol {
+            self.leftDelegate = left
         }
         
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: "handlePanGesture:")
@@ -116,6 +107,14 @@ extension FA_RevealMenuController {
     func addChildSidePanelController(sidePanelController: UIViewController) {
         view.insertSubview(sidePanelController.view, atIndex: 0)
         addChildViewController(sidePanelController)
+    }
+    
+    func addChildFrontPanelController(sidePanelController: UIViewController) {
+        if let centerView = self.centerViewController?.view {
+            sidePanelController.view.frame = centerView.frame
+        }
+        addChildViewController(sidePanelController)
+        view.addSubview(sidePanelController.view)
     }
     
     func showShadowForCenterViewController(shouldShowShadow: Bool) {
@@ -181,33 +180,53 @@ extension FA_RevealMenuController: UIGestureRecognizerDelegate {
         return true
     }
     
-}
-
-// MARK: - FA_MenuSelectionProtocol delegate method
-extension FA_RevealMenuController: FA_MenuSelectionProtocol {
-    func selectionWasMade(sender: UIViewController, object: AnyObject?) {
-        // Closing menu
-        if currentState != .Collapsed {
-            self.collapseSidePanels()
-        }
+    func passMessageToFrontViewController() {
         
-        
-        // Trying to infomr the front view controller a selection was made based
-        // on the type of the front view controller.
-        
-        // Could add support for more like TabViewController
-        
-        // Simple case where the centerViewController is the UIViewController
-        if let front = centerViewController as? FA_FrontViewMinimalImplementation {
-            front.selectionChangedInMenu(object)
-        }
-            // It could be a navigation controller. In that case, the rootViewController might implement the protocol?
-        else if let nav = centerViewController as? UINavigationController,
-            let root = nav.viewControllers[0] as? FA_FrontViewMinimalImplementation {
-                root.selectionChangedInMenu(object)
+        if let object:AnyObject = self.leftDelegate?.selectionWasMade() {
+            
+            // Trying to infomr the front view controller a selection was made based
+            // on the type of the front view controller.
+            
+            // Could add support for more like TabViewController
+            
+            // Simple case where the centerViewController is the UIViewController
+            if let front = centerViewController as? FA_FrontViewMinimalImplementation {
+                front.selectionChangedInMenu(object)
+            }
+                // It could be a navigation controller. In that case, the rootViewController might implement the protocol?
+            else if let nav = centerViewController as? UINavigationController,
+                let root = nav.viewControllers[0] as? FA_FrontViewMinimalImplementation {
+                    root.selectionChangedInMenu(object)
+            }
         }
     }
+    
+    func swapFrontControllers(destination: UIViewController) {
+
+        
+        if self.leftDelegate?.shouldReplaceWithNewViewController() ?? true {
+            NSLog("new VC")
+            self.addChildFrontPanelController(destination)
+            
+            
+            if let center = self.centerViewController {
+                center.view.removeFromSuperview()
+                center.removeFromParentViewController()
+            }
+            
+            self.centerViewController = destination
+            self.passMessageToFrontViewController()
+        }
+        
+        // Closing menu
+        if self.currentState != .Collapsed {
+            self.collapseSidePanels()
+        }
+
+    }
+    
 }
+
 
 // MARK: - UIViewController extension
 extension UIViewController {
@@ -239,11 +258,40 @@ class FA_ReavealMenuSegueSetController: UIStoryboardSegue {
         if let container = self.sourceViewController as? FA_RevealMenuController,
             let destination = self.destinationViewController as? UIViewController
         {
+            
+            // Closing menu
+            if container.currentState != .Collapsed {
+                container.collapseSidePanels()
+            }
+            
+            
             if identifier == FASegueFrontIdentifier {
-                container.centerViewController = destination
+                
+                container.swapFrontControllers(destination)
+                
                 
             } else if identifier == FASegueLeftIdentifier {
                 container.leftViewController = destination
+                container.addChildSidePanelController(destination)
+            }
+        }
+        
+    }
+}
+
+// MARK: - Custom Segue
+class FA_ReavealMenuSeguePushController: UIStoryboardSegue {
+    
+    override func perform() {
+        let identifier = self.identifier;
+        
+        if let container = self.sourceViewController.FA_RevealMenu(),
+            let destination = self.destinationViewController as? UIViewController
+        {
+
+            if identifier == FASegueFrontIdentifier {
+                container.swapFrontControllers(destination)
+                
             }
         }
         
